@@ -3,35 +3,39 @@ import glob
 import os
 import shutil
 import subprocess
+import itertools
 
-SOURCE='nodata' # dir containing archives
-DEST='music' # dir to decompress into
+SOURCE_DIR='nodata' # root of archives
+OUTPUT_DIR='music' # to decompress into
+EXTS = ['zip', 'rar']
 
 # archive extension: command line arguments
-EXT_ARGS = {'zip': lambda fpath: ['unzip', '-n', fpath, '-d', DEST],
-            'rar': lambda fpath: ['unrar', '-o-', 'x', fpath, DEST]}
+def p7zip_decompress(fpath, destination=''):
+    """Decompress specified file using p7zip."""
+    command_args = ['7z', 'x', fpath, '-y']
+    if destination:
+        command_args.append(f'-o{destination}')
+    subprocess.run(command_args, check=True)
 
-def decompress(archives):
-    """Uncompress archives using command-line utilities."""
-    failed = []
-    removed = []
-    for ext, fpaths in archives.items():
-        for fpath in fpaths:
-            args = EXT_ARGS[ext](fpath)
-            try:
-                subprocess.run(args, check=True)
-            except subprocess.CalledProcessError:
-                failed.append(fpath)
-            else:
-                os.remove(fpath)
-                removed.append(fpath)
+def decompress(source, output, exts):
+    """Decompress specified archives using command-line utilities."""
+    archives = itertools.chain.from_iterable(
+        glob.iglob(os.path.join(source, '*.'+ext))
+        for ext in exts)
     
-    return removed, failed
-
-if __name__ == '__main__':
-    archives = {ext: glob.glob(os.path.join(SOURCE, '*.'+ext))
-                for ext in EXT_ARGS.keys()}
-    removed, failed = decompress(archives)
+    failed, removed = [], []
+    for fpath in archives:
+        try:
+            p7zip_decompress(fpath, output)
+        except subprocess.CalledProcessError:
+            failed.append(fpath)
+        else:
+            os.remove(fpath)
+            removed.append(fpath)
+    
     print(f'Decompressed and removed {len(removed)} archives')
     if failed:
         print('Could not decompress:\n\t' + '\n\t'.join(failed))
+
+if __name__ == '__main__':
+    decompress(SOURCE_DIR, OUTPUT_DIR, EXTS)
