@@ -24,7 +24,7 @@ def find_release(client, dirname):
     full_title, tags = split_dirname(dirname)
     releases = client.search(full_title, type='release')
     try:
-        return releases[0] # assume first result is best match
+        return releases[0].id # assume first result is best match
     except IndexError:
         return None
 
