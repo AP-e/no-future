@@ -19,24 +19,24 @@ def make_client():
             raise ValueError('You must specify a valid discogs user token')
     return discogs_client.Client(DISCOGS_USER_AGENT, user_token=user_token)
 
-def find_release(client, dirname):
-    """Return Discogs release matching directory name."""
-    full_title, tags = split_dirname(dirname)
+def find_release(client, release_dir):
+    """Return id of Discogs release matching name of specified directory."""
+    full_title, tags = split_release_dir(release_dir)
     releases = client.search(full_title, type='release')
     try:
         return releases[0].id # assume first result is best match
     except IndexError:
         return None
 
-def split_dirname(dirname):
-    """Split dirname into full title string and list of debracketed tags."""
+def split_release_dir(release_dir):
+    """Split release directory into full title and list of debracketed tags."""
     p = re.compile(r'\[\w+\]')
-    m = p.search(dirname)
+    m = p.search(release_dir)
     if m is None:
-        full_title, tags = dirname, []
+        full_title, tags = release_dir, []
     else:
-        full_title = dirname[:m.start()].strip()
-        tags = [tag.strip('[]') for tag in p.findall(dirname, m.start())]
+        full_title = release_dir[:m.start()].strip()
+        tags = [tag.strip('[]') for tag in p.findall(release_dir, m.start())]
     return full_title, tags
 
 def get_release_data(client, release_id):
