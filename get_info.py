@@ -47,7 +47,7 @@ def get_release_data(client, release_id):
 
 def parse_release_data(client, release_data):
     """Return dict of release information."""
-    fields = {}
+    fields = {'id': release_data['id']}
     fields['title'] = release_data['title']
     fields['year'] = release_data['year']
     fields['label'] = strip_suffix(release_data['labels'][0]['name']) # use first label only
