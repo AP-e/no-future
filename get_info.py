@@ -38,3 +38,27 @@ def split_dirname(dirname):
         full_title = dirname[:m.start()].strip()
         tags = [tag.strip('[]') for tag in p.findall(dirname, m.start())]
     return full_title, tags
+
+def get_release_data(client, release_id):
+    """Return all the data from a release."""
+    release = client.release(release_id)
+    release.refresh() # request all data
+    return release.data
+
+def parse_release_data(client, release_data):
+    """Return dict of release information."""
+    fields = {}
+    fields['title'] = release_data['title']
+    fields['year'] = release_data['year']
+    fields['label'] = strip_suffix(release_data['labels'][0]['name']) # use first label only
+    artists = [strip_suffix(artist['name']) for artist in release_data['artists']]
+    fields['artist'] = ', '.join(artists)
+    return fields
+
+def strip_suffix(field):
+    """Strip release field of any Discogs numerical suffix."""
+    suffix = re.compile(r' \(([2-9]|[1-9][0-9]+)\)$')
+    try: # 'Klaus (25) -> 'Klaus'
+        return field[:suffix.search(field).start()]
+    except AttributeError: # no suffix
+        return field
