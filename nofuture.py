@@ -1,5 +1,5 @@
 """ no-future """
-import glob
+import pathlib
 import os
 import shutil
 import subprocess
@@ -19,9 +19,8 @@ def p7zip_decompress(fpath, destination=''):
 
 def decompress(source, output, exts):
     """Decompress specified archives using command-line utilities."""
-    archives = itertools.chain.from_iterable(
-        glob.iglob(os.path.join(source, '*.'+ext))
-        for ext in exts)
+    archives = sorted(itertools.chain.from_iterable(
+        source.glob(f'*.{ext}') for ext in exts))
     
     failed, removed = [], []
     for fpath in archives:
@@ -35,7 +34,8 @@ def decompress(source, output, exts):
     
     print(f'Decompressed and removed {len(removed)} archives')
     if failed:
-        print('Could not decompress:\n\t' + '\n\t'.join(failed))
+        print('Could not decompress:\n\t' + 
+              '\n\t'.join((fpath.name for fpath in failed)))
 
 if __name__ == '__main__':
-    decompress(SOURCE_DIR, OUTPUT_DIR, EXTS)
+    decompress(pathlib.Path(SOURCE_DIR), pathlib.Path(OUTPUT_DIR), EXTS)
