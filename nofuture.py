@@ -37,5 +37,24 @@ def decompress(source, output, exts):
         print('Could not decompress:\n\t' + 
               '\n\t'.join((fpath.name for fpath in failed)))
 
+def sanitise_path_component(string):
+    """Return string sanitised for use in portable file paths.
+    
+    Removes:
+        < > : " \ | ?  *
+    Changes:
+        `Untitled / Footloose` -> Untitled _ Footloose`.
+        `Untitled ` -> `Untitled`
+        `Untitled.` -> `Untitled`
+    """
+    old_string = string
+    for bad_char in '<>:"\|?*':
+        string = string.replace(bad_char, '')
+    string = string.replace('/', '_')
+    string = string.rstrip(' .')
+    if not string:
+        raise ValueError(f"'{old_string}' cannot be coerced to a valid filepath component")
+    return string
+
 if __name__ == '__main__':
     decompress(pathlib.Path(SOURCE_DIR), pathlib.Path(OUTPUT_DIR), EXTS)
