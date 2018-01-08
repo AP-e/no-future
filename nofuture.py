@@ -5,8 +5,9 @@ import shutil
 import subprocess
 import itertools
 
-SOURCE_DIR='nodata' # root of archives
-OUTPUT_DIR='music' # to decompress into
+ARCHIVES_DIR='archives' # music archives found here
+STAGING_DIR='staging'# to decompress into and work from
+OUTPUT_DIR='music' # formatted directories moved here
 EXTS = ['zip', 'rar']
 
 # archive extension: command line arguments
@@ -66,4 +67,4 @@ def format_release_path(artist=None, title=None, label=None, year=None, catno=No
     return pathlib.Path(label).joinpath(release_dir)
 
 if __name__ == '__main__':
-    decompress(pathlib.Path(SOURCE_DIR), pathlib.Path(OUTPUT_DIR), EXTS)
+    decompress(pathlib.Path(ARCHIVES_DIR), pathlib.Path(STAGING_DIR), EXTS)
