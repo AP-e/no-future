@@ -56,5 +56,14 @@ def sanitise_path_component(string):
         raise ValueError(f"'{old_string}' cannot be coerced to a valid filepath component")
     return string
 
+def format_release_path(artist=None, title=None, label=None, year=None, catno=None,
+                            **extra_fields):
+    """Construct path object with format 'label/[catno] artist - title (year)'."""
+    artist = sanitise_path_component(artist)
+    title = sanitise_path_component(title)
+    label = sanitise_path_component(label)
+    release_dir = f'[{catno}] {artist} - {title} ({year})'
+    return pathlib.Path(label).joinpath(release_dir)
+
 if __name__ == '__main__':
     decompress(pathlib.Path(SOURCE_DIR), pathlib.Path(OUTPUT_DIR), EXTS)
