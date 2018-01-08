@@ -8,7 +8,7 @@ DISCOGS_USER_AGENT = 'nofuture/0.1'
 DISCOGS_USER_TOKEN = None
 
 # Rate-limit Discogs API calls
-discogs_client.Client._get = ratelimit.rate_limited(60, 61)(discogs_client.Client._get)
+discogs_client.Client._get = ratelimit.rate_limited(60, 65)(discogs_client.Client._get)
 
 def make_client():
     """Initialise single-user authorised discogs client."""
