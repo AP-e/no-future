@@ -50,7 +50,9 @@ def parse_release_data(client, release_data):
     fields = {'id': release_data['id']}
     fields['title'] = release_data['title']
     fields['year'] = release_data['year']
-    fields['label'] = strip_suffix(release_data['labels'][0]['name']) # use first label only
+    label = release_data['labels'][0] # use first label only
+    fields['label'] = strip_suffix(label['name'])
+    fields['catno'] = label['catno']
     artists = [strip_suffix(artist['name']) for artist in release_data['artists']]
     fields['artist'] = ', '.join(artists)
     return fields
