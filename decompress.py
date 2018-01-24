@@ -1,14 +1,9 @@
-""" no-future """
+""" decompress """
 import pathlib
 import os
 import shutil
 import subprocess
 import itertools
-
-ARCHIVES_DIR='archives' # music archives found here
-STAGING_DIR='staging'# to decompress into and work from
-OUTPUT_DIR='music' # formatted directories moved here
-EXTS = ['zip', 'rar']
 
 # archive extension: command line arguments
 def p7zip_decompress(fpath, destination=''):
@@ -18,7 +13,7 @@ def p7zip_decompress(fpath, destination=''):
         command_args.append(f'-o{destination}')
     subprocess.run(command_args, check=True)
 
-def decompress(source, output, exts):
+def decompress(source, output, exts=['zip', 'rar']):
     """Decompress specified archives using command-line utilities."""
     archives = sorted(itertools.chain.from_iterable(
         source.glob(f'*.{ext}') for ext in exts))
@@ -65,6 +60,3 @@ def format_release_path(artist=None, title=None, label=None, year=None, catno=No
     label = sanitise_path_component(label)
     release_dir = f'[{catno}] {artist} - {title} ({year})'
     return pathlib.Path(label).joinpath(release_dir)
-
-if __name__ == '__main__':
-    decompress(pathlib.Path(ARCHIVES_DIR), pathlib.Path(STAGING_DIR), EXTS)
