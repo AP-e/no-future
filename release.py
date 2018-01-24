@@ -19,16 +19,59 @@ def make_client():
             raise ValueError('You must specify a valid discogs user token')
     return discogs_client.Client(DISCOGS_USER_AGENT, user_token=user_token)
 
-def find_release(client, release_dir):
-    """Return id of Discogs release matching name of specified directory."""
-    full_title, tags = split_release_dir(release_dir)
-    releases = client.search(full_title, type='release')
-    try:
-        return releases[0].id # assume first result is best match
-    except IndexError:
-        return None
+class Release:
+    """A wrapper around Discogs release data."""
+    client = make_client()
 
-def split_release_dir(release_dir):
+    def __init__(self, release_id):
+        self.get_release_data(release_id)
+
+    @classmethod
+    def from_dirname(cls, dirname):
+        """Initialise release matching specified directory name."""
+        full_title, tags = _split_release_dir(dirname)
+        releases = cls.client.search(full_title, type='release')
+        release_id = releases[0].id # assume first result is best match
+        return cls(release_id)
+
+    def get_release_data(self, release_id):
+        """Retrieve the dict of data from a Discogs release."""
+        discogs_release = self.client.release(release_id)
+        discogs_release.refresh() # request all data
+        self._data = discogs_release.data
+
+    @property
+    def id(self):
+        """Discogs release id."""
+        return self._data['id']
+
+    @property
+    def title(self):
+        """Release title."""
+        return self._data['title']
+
+    @property
+    def year(self):
+        """Release year."""
+        return self._data['year']
+
+    @property
+    def label(self):
+        """Name of the release's primary record label."""
+        return _strip_suffix(self._data['labels'][0]['name'])
+
+    @property
+    def catno(self):
+        """Catalog number of release on primary record label."""
+        return self._data['labels'][0]['catno']
+
+    @property
+    def artist(self):
+        """Release artist, or artists joined by commas."""
+        artists = [_strip_suffix(artist['name']) for artist in self._data['artists']]
+        return ', '.join(artists)
+
+def _split_release_dir(release_dir):
     """Split release directory into full title and list of debracketed tags."""
     p = re.compile(r'\[\w+\]')
     m = p.search(release_dir)
@@ -39,25 +82,7 @@ def split_release_dir(release_dir):
         tags = [tag.strip('[]') for tag in p.findall(release_dir, m.start())]
     return full_title, tags
 
-def get_release_data(client, release_id):
-    """Return all the data from a release."""
-    release = client.release(release_id)
-    release.refresh() # request all data
-    return release.data
-
-def parse_release_data(client, release_data):
-    """Return dict of release information."""
-    fields = {'id': release_data['id']}
-    fields['title'] = release_data['title']
-    fields['year'] = release_data['year']
-    label = release_data['labels'][0] # use first label only
-    fields['label'] = strip_suffix(label['name'])
-    fields['catno'] = label['catno']
-    artists = [strip_suffix(artist['name']) for artist in release_data['artists']]
-    fields['artist'] = ', '.join(artists)
-    return fields
-
-def strip_suffix(field):
+def _strip_suffix(field):
     """Strip release field of any Discogs numerical suffix."""
     suffix = re.compile(r' \(([2-9]|[1-9][0-9]+)\)$')
     try: # 'Klaus (25) -> 'Klaus'
