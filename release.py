@@ -26,6 +26,12 @@ class Release:
     def __init__(self, release_id):
         self.get_release_data(release_id)
 
+    def __getitem__(self, key):
+        return getattr(self, key)
+
+    def keys(self):
+        return ['id', 'title', 'year', 'label', 'catno', 'artist']
+
     @classmethod
     def from_dirname(cls, dirname):
         """Initialise release matching specified directory name."""

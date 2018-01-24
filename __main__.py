@@ -50,7 +50,7 @@ def get_release_information(archives_dir, staging_dir):
 def format_release_directories(releases, staging_dir, output_dir):
     for dirname, release_ in sorted(releases.items()):
         input_path = staging_dir.joinpath(dirname)
-        release_dir = format_release_path(artist=release_.artist, title=release_.title, label=release_.label, year=release_.year, catno=release_.catno)
+        release_dir = format_release_path(**release_)
         output_path = output_dir.joinpath(release_dir)
         moved = shutil.move(str(input_path), str(output_path))
 
