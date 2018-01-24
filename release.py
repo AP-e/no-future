@@ -73,6 +73,7 @@ class Release:
 
 def _split_release_dir(release_dir):
     """Split release directory into full title and list of debracketed tags."""
+    release_dir = str(release_dir)
     p = re.compile(r'\[\w+\]')
     m = p.search(release_dir)
     if m is None:
