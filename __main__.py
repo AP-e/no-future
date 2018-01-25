@@ -63,6 +63,8 @@ for path in (staging_dir, output_dir):
     except(FileExistsError):
         pass
 
-decompress.decompress(archives_dir, staging_dir)
+decompressed, non_decompressed = decompress.decompress(archives_dir, staging_dir)
+for fpath in decompressed:
+    os.remove(fpath)
 releases, failed = get_release_information(archives_dir, staging_dir)
 format_release_directories(releases, staging_dir, output_dir)
