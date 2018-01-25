@@ -1,4 +1,11 @@
 __pycache__
 nodata
-music
 reset
+*.swp
+archives/
+staging/
+music/
+*.json
+*.orig
+*.log
+
