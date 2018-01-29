@@ -51,17 +51,31 @@ def format_release_directories(releases, staging_dir, output_dir):
         output_path = output_dir.joinpath(release_dir)
         moved = shutil.move(str(input_path), str(output_path))
 
-archives_dir, staging_dir, output_dir = (pathlib.Path(path)
-    for path in (ARCHIVES_DIR, STAGING_DIR, OUTPUT_DIR))
-# Ensure output directories exist
-for path in (staging_dir, output_dir):
-    try:
-        path.mkdir()
-    except(FileExistsError):
-        pass
+def touch_directories(staging_dir, output_dir):
+    """Create specified staging and output directories, if necessary.""" 
+    for path in (staging_dir, output_dir):
+        try:
+            path.mkdir()
+        except(FileExistsError):
+            pass
 
-decompressed, non_decompressed = decompress.decompress(archives_dir, staging_dir)
-for fpath in decompressed:
-    os.remove(fpath)
-releases, failed = get_release_information(archives_dir, staging_dir)
-format_release_directories(releases, staging_dir, output_dir)
+def main():
+    # Set up input, working and output directories
+    archives_dir, staging_dir, output_dir = (pathlib.Path(path)
+        for path in (ARCHIVES_DIR, STAGING_DIR, OUTPUT_DIR))
+    touch_directories(staging_dir, output_dir)
+    
+    # Decompress archives to release directories
+    decompressed, non_decompressed = decompress.decompress(archives_dir, staging_dir)
+    
+    # Match release directories to Discogs releases
+    releases, failed = get_release_information(archives_dir, staging_dir)
+    
+    # Rename release directories accordingly
+    format_release_directories(releases, staging_dir, output_dir)
+    
+    # Clean up decompressed archives
+    for fpath in decompressed:
+        os.remove(fpath)
+
+main()
