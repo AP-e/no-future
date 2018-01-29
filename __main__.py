@@ -3,10 +3,7 @@ import pathlib
 import shutil
 import decompress
 import release
-
-ARCHIVES_DIR='archives' # music archives found here
-STAGING_DIR='staging'# to decompress into and work from
-OUTPUT_DIR='music' # formatted directories moved here
+from config import ARCHIVES_DIR, STAGING_DIR, OUTPUT_DIR
 
 def sanitise_path_component(string):
     """Return string sanitised for use in portable file paths.
