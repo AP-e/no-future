@@ -2,7 +2,7 @@ import os
 import pathlib
 from . import decompress
 from . import nofuture
-from .config import ARCHIVES_DIR, STAGING_DIR, OUTPUT_DIR
+from .config import ARCHIVES_DIR, STAGING_DIR, OUTPUT_DIR, ARCHIVE_FORMATS
 
 def main():
     # Set up input, working and output directories
@@ -11,7 +11,8 @@ def main():
     nofuture.touch_directories(staging_dir, output_dir)
     
     # Decompress archives to release directories
-    decompressed, non_decompressed = decompress.decompress(archives_dir, staging_dir)
+    decompressed, non_decompressed = decompress.decompress(
+        archives_dir, staging_dir, ARCHIVE_FORMATS)
     
     # Match release directories to Discogs releases
     releases, failed = nofuture.get_release_information(staging_dir)
