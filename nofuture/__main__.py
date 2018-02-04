@@ -1,8 +1,8 @@
 import os
 import pathlib
-import decompress
-import nofuture
-from config import ARCHIVES_DIR, STAGING_DIR, OUTPUT_DIR
+from . import decompress
+from . import nofuture
+from .config import ARCHIVES_DIR, STAGING_DIR, OUTPUT_DIR
 
 def main():
     # Set up input, working and output directories

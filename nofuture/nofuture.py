@@ -1,7 +1,7 @@
 import os
 import pathlib
 import shutil
-import release
+from . import release
 
 def format_release_path(artist=None, title=None, label=None, year=None, catno=None,
                             **extra_fields):
