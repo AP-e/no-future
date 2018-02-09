@@ -38,6 +38,15 @@ def archive(archives_dir, decompressed_dir, request):
     patoolib.create_archive(str(archive), [str(decompressed_dir)])
     return archive
 
+@pytest.fixture()
+def corrupted_archive(archive):
+    """Return path of a corrupted archive."""
+    with open(archive, 'rb') as o:
+        contents = o.read()
+    with open(archive, 'wb') as o:
+        o.write(contents[::2])
+    return archive
+
 @pytest.mark.parametrize('archive', ARCHIVE_FORMATS, indirect=True)
 def test_decompression(archive, archives_dir, staging_dir):
     """Can all formats be decompressed from archives to staging?"""
@@ -45,3 +54,11 @@ def test_decompression(archive, archives_dir, staging_dir):
         Path(archives_dir), Path(staging_dir), ARCHIVE_FORMATS)
     *_, (fpath, *_) = os.walk(staging_dir) # get deepest dir (synthetic rars include full path)
     assert Path(fpath).name == RELEASE['dirname']
+
+@pytest.mark.parametrize('archive', ARCHIVE_FORMATS, indirect=True)
+def test_failed_decompression(corrupted_archive, archives_dir, staging_dir):
+    """Is the failed decompression of corrupt archives caught and reported?"""
+    decompressed, failed = decompress.decompress( 
+        Path(archives_dir), Path(staging_dir), ARCHIVE_FORMATS)
+    failed, = failed
+    assert failed == corrupted_archive and not decompressed
