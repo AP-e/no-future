@@ -37,3 +37,11 @@ def archive(archives_dir, decompressed_dir, request):
     archive = archives_dir.join(RELEASE['archivename']).new(ext=request.param)
     patoolib.create_archive(str(archive), [str(decompressed_dir)])
     return archive
+
+@pytest.mark.parametrize('archive', ARCHIVE_FORMATS, indirect=True)
+def test_decompression(archive, archives_dir, staging_dir):
+    """Can all formats be decompressed from archives to staging?"""
+    decompressed, failed = decompress.decompress(
+        Path(archives_dir), Path(staging_dir), ARCHIVE_FORMATS)
+    *_, (fpath, *_) = os.walk(staging_dir) # get deepest dir (synthetic rars include full path)
+    assert Path(fpath).name == RELEASE['dirname']
