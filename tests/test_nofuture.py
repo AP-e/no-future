@@ -71,3 +71,9 @@ def test_discogs_client_works():
     client = nofuture.release.make_client()
     release = client.release(RELEASE['id'])
     assert release.id == RELEASE['id']
+
+def test_Release_attributes_are_correct():
+    """Does the Release object present release details as expected?"""
+    release = nofuture.release.Release(RELEASE['id'])
+    for field in ['artist', 'catno', 'id', 'label', 'title', 'year']:
+        assert getattr(release, field) == RELEASE[field]
