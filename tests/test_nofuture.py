@@ -2,7 +2,7 @@ import pytest
 from pathlib import Path
 import os
 import patoolib
-import nofuture.decompress
+import nofuture.decompress, nofuture.release
 from nofuture.config import ARCHIVES_DIR, STAGING_DIR, ARCHIVE_FORMATS
 
 RELEASE = {'id': 6666365,
@@ -62,3 +62,9 @@ def test_failed_decompression(corrupted_archive, archives_dir, staging_dir):
         Path(archives_dir), Path(staging_dir), ARCHIVE_FORMATS)
     failed, = failed
     assert failed == corrupted_archive and not decompressed
+
+def test_discogs_client_works():
+    """Can the Discogs client retrieve real release information?"""
+    client = nofuture.release.make_client()
+    release = client.release(RELEASE['id'])
+    assert release.id == RELEASE['id']
