@@ -2,7 +2,7 @@ import pytest
 from pathlib import Path
 import os
 import patoolib
-from nofuture import decompress
+import nofuture.decompress
 from nofuture.config import ARCHIVES_DIR, STAGING_DIR, ARCHIVE_FORMATS
 
 RELEASE = {'id': 6666365,
@@ -50,7 +50,7 @@ def corrupted_archive(archive):
 @pytest.mark.parametrize('archive', ARCHIVE_FORMATS, indirect=True)
 def test_decompression(archive, archives_dir, staging_dir):
     """Can all formats be decompressed from archives to staging?"""
-    decompressed, failed = decompress.decompress(
+    decompressed, failed = nofuture.decompress.decompress(
         Path(archives_dir), Path(staging_dir), ARCHIVE_FORMATS)
     *_, (fpath, *_) = os.walk(staging_dir) # get deepest dir (synthetic rars include full path)
     assert Path(fpath).name == RELEASE['dirname']
@@ -58,7 +58,7 @@ def test_decompression(archive, archives_dir, staging_dir):
 @pytest.mark.parametrize('archive', ARCHIVE_FORMATS, indirect=True)
 def test_failed_decompression(corrupted_archive, archives_dir, staging_dir):
     """Is the failed decompression of corrupt archives caught and reported?"""
-    decompressed, failed = decompress.decompress( 
+    decompressed, failed = nofuture.decompress.decompress(
         Path(archives_dir), Path(staging_dir), ARCHIVE_FORMATS)
     failed, = failed
     assert failed == corrupted_archive and not decompressed
