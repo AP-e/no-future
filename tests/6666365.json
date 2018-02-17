@@ -1,0 +1,169 @@
+{
+  "id":6666365,
+  "resource_url":"https://api.discogs.com/releases/6666365",
+  "status":"Accepted",
+  "videos":[
+    {
+      "duration":315,
+      "embed":true,
+      "title":"Hodge X - Boiler Room Debuts",
+      "description":"Hodge X - Boiler Room Debuts",
+      "uri":"https://www.youtube.com/watch?v=IURPbUuE3CY"
+    },
+    {
+      "duration":175,
+      "embed":true,
+      "title":"Acre - Don't Get Me Started",
+      "description":"Acre - Don't Get Me Started",
+      "uri":"https://www.youtube.com/watch?v=WBOOfgBqqPk"
+    }
+  ],
+  "series":[],
+  "labels":[
+    {
+      "name":"Wisdom Teeth",
+      "entity_type":"1",
+      "catno":"WSDM002",
+      "resource_url":"https://api.discogs.com/labels/739381",
+      "id":739381,
+      "entity_type_name":"Label"
+    }
+  ],
+  "year":2015,
+  "community":{
+    "status":"Accepted",
+    "rating":{
+      "count":19,
+      "average":4.37
+    },
+    "want":129,
+    "contributors":[
+      {
+        "username":"oscarhenson",
+        "resource_url":"https://api.discogs.com/users/oscarhenson"
+      },
+      {
+        "username":"m1ch1",
+        "resource_url":"https://api.discogs.com/users/m1ch1"
+      },
+      {
+        "username":"HM-2",
+        "resource_url":"https://api.discogs.com/users/HM-2"
+      }
+    ],
+    "have":206,
+    "submitter":{
+      "username":"oscarhenson",
+      "resource_url":"https://api.discogs.com/users/oscarhenson"
+    },
+    "data_quality":"Needs Vote"
+  },
+  "artists":[
+    {
+      "join":"/",
+      "name":"Hodge (3)",
+      "anv":"",
+      "tracks":"",
+      "role":"",
+      "resource_url":"https://api.discogs.com/artists/2415662",
+      "id":2415662
+    },
+    {
+      "join":"",
+      "name":"Acre (3)",
+      "anv":"",
+      "tracks":"",
+      "role":"",
+      "resource_url":"https://api.discogs.com/artists/2293170",
+      "id":2293170
+    }
+  ],
+  "images":[
+    {
+      "uri":"https://img.discogs.com/tX1jdfkP75nYVPodg3iPnXU66WM=/fit-in/300x299/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-6666365-1454157645-7668.jpeg.jpg",
+      "height":299,
+      "width":300,
+      "resource_url":"https://img.discogs.com/tX1jdfkP75nYVPodg3iPnXU66WM=/fit-in/300x299/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-6666365-1454157645-7668.jpeg.jpg",
+      "type":"primary",
+      "uri150":"https://img.discogs.com/7amAlyM0hdd519E6rSDYNg-dLEc=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-6666365-1454157645-7668.jpeg.jpg"
+    },
+    {
+      "uri":"https://img.discogs.com/GJZfQazJZrln39_TWSP6qgrHvII=/fit-in/299x300/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-6666365-1454157645-5528.jpeg.jpg",
+      "height":300,
+      "width":299,
+      "resource_url":"https://img.discogs.com/GJZfQazJZrln39_TWSP6qgrHvII=/fit-in/299x300/filters:strip_icc():format(jpeg):mode_rgb():quality(90)/discogs-images/R-6666365-1454157645-5528.jpeg.jpg",
+      "type":"secondary",
+      "uri150":"https://img.discogs.com/PL8DS1eMbEc8R3C8YkmRo6RVC4A=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-6666365-1454157645-5528.jpeg.jpg"
+    }
+  ],
+  "format_quantity":1,
+  "genres":[
+    "Electronic"
+  ],
+  "thumb":"https://img.discogs.com/7amAlyM0hdd519E6rSDYNg-dLEc=/fit-in/150x150/filters:strip_icc():format(jpeg):mode_rgb():quality(40)/discogs-images/R-6666365-1454157645-7668.jpeg.jpg",
+  "num_for_sale":7,
+  "title":"X / Don't Get Me Started",
+  "date_changed":"2016-01-30T04:40:49-08:00",
+  "lowest_price":3.0,
+  "styles":[
+    "Techno",
+    "Grime"
+  ],
+  "released_formatted":"09 Feb 2015",
+  "formats":[
+    {
+      "qty":"1",
+      "descriptions":[
+        "12\""
+      ],
+      "name":"Vinyl"
+    }
+  ],
+  "estimated_weight":230,
+  "released":"2015-02-09",
+  "date_added":"2015-02-17T09:24:30-08:00",
+  "extraartists":[
+
+  ],
+  "tracklist":[
+    {
+      "duration":"",
+      "position":"A",
+      "type_":"track",
+      "artists":[
+        {
+          "join":"",
+          "name":"Hodge (3)",
+          "anv":"",
+          "tracks":"",
+          "role":"",
+          "resource_url":"https://api.discogs.com/artists/2415662",
+          "id":2415662
+        }
+      ],
+      "title":"X"
+    },
+    {
+      "duration":"",
+      "position":"AA",
+      "type_":"track",
+      "artists":[
+        {
+          "join":"",
+          "name":"Acre (3)",
+          "anv":"",
+          "tracks":"",
+          "role":"",
+          "resource_url":"https://api.discogs.com/artists/2293170",
+          "id":2293170
+        }
+      ],
+      "title":"Don't Get Me Started"
+    }
+  ],
+  "identifiers":[],
+  "companies":[],
+  "uri":"https://www.discogs.com/Hodge-3-Acre-X-Dont-Get-Me-Started/release/6666365",
+  "country":"UK",
+  "data_quality":"Needs Vote"
+}

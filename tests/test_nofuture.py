@@ -1,17 +1,21 @@
 import pytest
 from pathlib import Path
 import os
+import json
 import patoolib
 import nofuture.decompress, nofuture.release
 from nofuture.config import ARCHIVES_DIR, STAGING_DIR, ARCHIVE_FORMATS
 
-# Formatted release details
-RELEASE = {'id': 6666365,
-           'title': "X / Don't Get Me Started",
-           'artist': "Hodge, Acre",
-           'label': "Wisdom Teeth",
-           'catno': "WSDM002",
-           'year': 2015}
+# Discogs release id of testing release
+RELEASE_ID = 6666365
+
+# Expected formatting of release details
+FORMATTED_RELEASE = {'id': 6666365,
+                     'title': "X / Don't Get Me Started",
+                     'artist': "Hodge, Acre",
+                     'label': "Wisdom Teeth",
+                     'catno': "WSDM002",
+                     'year': 2015}
 
 # Archive information
 ARCHIVE = {'dirname': "Hodge & Acre - X _ Don't Get Me Started [2015] [EP]",
@@ -50,6 +54,25 @@ def corrupted_archive(archive):
         o.write(contents[::2])
     return archive
 
+@pytest.fixture(scope='module')
+def release_data():
+    """Return the locally stored version of the Discogs release data."""
+    fpath = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                         '.'.join([str(RELEASE_ID), 'json']))
+    return json.load(open(fpath, 'r'))
+
+@pytest.fixture()
+def release(monkeypatch, release_data):
+    """Return a Release object initialised using local data."""
+    def get_release_data(self, release_id):
+        """Replacement for `nofuture.release.Release.get_release_data` to bypass discogs client."""
+        if release_id != release_data['id']:
+            raise ValueError
+        return release_data
+    monkeypatch.setattr('nofuture.release.Release.get_release_data',
+                        get_release_data)
+    return nofuture.release.Release(RELEASE_ID)
+
 @pytest.mark.parametrize('archive', ARCHIVE_FORMATS, indirect=True)
 def test_decompression(archive, archives_dir, staging_dir):
     """Can all formats be decompressed from archives to staging?"""
@@ -66,14 +89,13 @@ def test_failed_decompression(corrupted_archive, archives_dir, staging_dir):
     failed, = failed
     assert failed == corrupted_archive and not decompressed
 
-def test_discogs_client_works():
+def test_discogs_client_works(release):
     """Can the Discogs client retrieve real release information?"""
     client = nofuture.release.make_client()
-    release = client.release(RELEASE['id'])
-    assert release.id == RELEASE['id']
+    real_release = client.release(RELEASE_ID)
+    assert real_release.title == release.title
 
-def test_Release_attributes_are_correct():
+def test_Release_attributes_are_correct(release):
     """Does the Release object present release details as expected?"""
-    release = nofuture.release.Release(RELEASE['id'])
     for field in ['artist', 'catno', 'id', 'label', 'title', 'year']:
-        assert getattr(release, field) == RELEASE[field]
+        assert getattr(release, field) == FORMATTED_RELEASE[field]
