@@ -24,7 +24,7 @@ class Release:
     client = make_client()
 
     def __init__(self, release_id):
-        self.get_release_data(release_id)
+        self._data = self.get_release_data(release_id)
 
     def __getitem__(self, key):
         return getattr(self, key)
@@ -44,7 +44,7 @@ class Release:
         """Retrieve the dict of data from a Discogs release."""
         discogs_release = self.client.release(release_id)
         discogs_release.refresh() # request all data
-        self._data = discogs_release.data
+        return discogs_release.data
 
     @property
     def id(self):
