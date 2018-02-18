@@ -3,6 +3,7 @@ from pathlib import Path
 import os
 import json
 import patoolib
+import unittest.mock
 import nofuture.decompress, nofuture.release, nofuture.nofuture
 from nofuture.config import ARCHIVES_DIR, STAGING_DIR, ARCHIVE_FORMATS
 
@@ -112,8 +113,11 @@ def test_release_created_from_search_term(release):
     real_release = nofuture.release.Release.from_search(ARCHIVE['full_title'])
     assert real_release.id == release.id
 
-def test_release_creation_from_staging(staging, release):
+def test_release_creation_from_staging(monkeypatch, staging, release):
     """Is a release created from a directory in the staging directory?"""
+    # Bypass discogs API call
+    monkeypatch.setattr('nofuture.nofuture.release.Release.client.search',
+        lambda *args, **kwargs: [unittest.mock.MagicMock(id=RELEASE_ID,
+            name='mock discogs_client.models.models.Release')])
     releases, failed = nofuture.nofuture.get_releases_in_staging(staging)
-    release_, = releases.values()
-    assert release_.id == release.id and not failed
+    assert releases and not failed
