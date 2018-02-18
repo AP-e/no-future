@@ -3,7 +3,7 @@ from pathlib import Path
 import os
 import json
 import patoolib
-import nofuture.decompress, nofuture.release
+import nofuture.decompress, nofuture.release, nofuture.nofuture
 from nofuture.config import ARCHIVES_DIR, STAGING_DIR, ARCHIVE_FORMATS
 
 # Discogs release id of testing release
@@ -20,7 +20,9 @@ FORMATTED_RELEASE = {'id': 6666365,
 # Archive information
 ARCHIVE = {'dirname': "Hodge & Acre - X _ Don't Get Me Started [2015] [EP]",
            'archivename': "HAXDGMS", # as per NoFuture
-           'files': ("01 Hodge - X.mp3", "02 Acre - Don't Get Me Started.mp3")}
+           'files': ("01 Hodge - X.mp3", "02 Acre - Don't Get Me Started.mp3"),
+           'full_title': "Hodge & Acre - X _ Don't Get Me Started",
+           'tags': ['2015', 'EP']}
 
 @pytest.fixture
 def archives_dir(tmpdir):
@@ -37,6 +39,11 @@ def decompressed_dir(tmpdir):
     for fname in ARCHIVE['files']:
         p = dir_.join(fname).write('')
     return dir_
+
+@pytest.fixture
+def staging(staging_dir, decompressed_dir):
+    decompressed_dir.move(staging_dir.join(decompressed_dir.basename))
+    return staging_dir
 
 @pytest.fixture()
 def archive(archives_dir, decompressed_dir, request):
@@ -99,3 +106,14 @@ def test_Release_attributes_are_correct(release):
     """Does the Release object present release details as expected?"""
     for field in ['artist', 'catno', 'id', 'label', 'title', 'year']:
         assert getattr(release, field) == FORMATTED_RELEASE[field]
+
+def test_release_created_from_search_term(release):
+    """Can Release be initialised using a search term?"""
+    real_release = nofuture.release.Release.from_search(ARCHIVE['full_title'])
+    assert real_release.id == release.id
+
+def test_release_creation_from_staging(staging, release):
+    """Is a release created from a directory in the staging directory?"""
+    releases, failed = nofuture.nofuture.get_releases_in_staging(staging)
+    release_, = releases.values()
+    assert release_.id == release.id and not failed
