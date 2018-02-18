@@ -15,7 +15,7 @@ def main():
         archives_dir, staging_dir, ARCHIVE_FORMATS)
     
     # Match release directories to Discogs releases
-    releases, failed = nofuture.get_release_information(staging_dir)
+    releases, failed = nofuture.get_releases_in_staging(staging_dir)
     
     # Rename release directories accordingly
     nofuture.format_release_directories(releases, staging_dir, output_dir)
