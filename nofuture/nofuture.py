@@ -1,5 +1,6 @@
 import os
 import pathlib
+import re
 import shutil
 from . import release
 
@@ -36,8 +37,9 @@ def get_release_information(staging_dir):
     failed = []
     for i, dirname in enumerate(os.listdir(staging_dir)):
         dirname = pathlib.Path(dirname)
+        full_title, tags = split_release_dir(dirname)
         try:
-            releases[dirname] = release.Release.from_dirname(dirname)
+            releases[dirname] = release.Release.from_search(full_title)
         except IndexError:
             failed.append(dirname)
     return releases, failed
@@ -56,3 +58,15 @@ def touch_directories(staging_dir, output_dir):
             path.mkdir()
         except(FileExistsError):
             pass
+
+def split_release_dir(release_dir):
+    """Split release directory into full title and list of debracketed tags."""
+    release_dir = str(release_dir)
+    p = re.compile(r'\[\w+\]')
+    m = p.search(release_dir)
+    if m is None:
+        full_title, tags = release_dir, []
+    else:
+        full_title = release_dir[:m.start()].strip()
+        tags = [tag.strip('[]') for tag in p.findall(release_dir, m.start())]
+    return full_title, tags

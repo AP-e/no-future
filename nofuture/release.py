@@ -1,4 +1,4 @@
-""" get_info """
+""" release """
 import os
 import discogs_client
 import re
@@ -33,10 +33,9 @@ class Release:
         return ['id', 'title', 'year', 'label', 'catno', 'artist']
 
     @classmethod
-    def from_dirname(cls, dirname):
-        """Initialise release matching specified directory name."""
-        full_title, tags = _split_release_dir(dirname)
-        releases = cls.client.search(full_title, type='release')
+    def from_search(cls, search_term):
+        """Initialise from first discogs release matching search term."""
+        releases = cls.client.search(search_term, type='release')
         release_id = releases[0].id # assume first result is best match
         return cls(release_id)
 
@@ -76,18 +75,6 @@ class Release:
         """Release artist, or artists joined by commas."""
         artists = [_strip_suffix(artist['name']) for artist in self._data['artists']]
         return ', '.join(artists)
-
-def _split_release_dir(release_dir):
-    """Split release directory into full title and list of debracketed tags."""
-    release_dir = str(release_dir)
-    p = re.compile(r'\[\w+\]')
-    m = p.search(release_dir)
-    if m is None:
-        full_title, tags = release_dir, []
-    else:
-        full_title = release_dir[:m.start()].strip()
-        tags = [tag.strip('[]') for tag in p.findall(release_dir, m.start())]
-    return full_title, tags
 
 def _strip_suffix(field):
     """Strip release field of any Discogs numerical suffix."""
