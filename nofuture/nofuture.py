@@ -32,17 +32,22 @@ def sanitise_path_component(string):
         raise ValueError(f"'{old_string}' cannot be coerced to a valid filepath component")
     return string
 
-def get_release_information(staging_dir):
+def get_releases_in_staging(staging_dir):
+    """Find releases matching each directory in staging."""
     releases = {}
     failed = []
     for i, dirname in enumerate(os.listdir(staging_dir)):
-        dirname = pathlib.Path(dirname)
-        full_title, tags = split_release_dir(dirname)
+        dirpath = pathlib.Path(dirname)
         try:
-            releases[dirname] = release.Release.from_search(full_title)
-        except IndexError:
-            failed.append(dirname)
+            releases[dirpath] = get_release_from_dirname(dirname)
+        except ValueError:
+            failed.append(dirpath)
     return releases, failed
+
+def get_release_from_dirname(dirname):
+    """Return the release described by directory name."""
+    full_title, tags = split_release_dir(dirname)
+    return release.Release.from_search(full_title)
 
 def format_release_directories(releases, staging_dir, output_dir):
     for dirname, release_ in sorted(releases.items()):

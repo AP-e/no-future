@@ -36,8 +36,11 @@ class Release:
     def from_search(cls, search_term):
         """Initialise from first discogs release matching search term."""
         releases = cls.client.search(search_term, type='release')
-        release_id = releases[0].id # assume first result is best match
-        return cls(release_id)
+        try:
+            release = releases[0] # assume first result is best match
+        except IndexError:
+            raise ValueError(f"Nothing found for {search_term}")
+        return cls(release.id)
 
     def get_release_data(self, release_id):
         """Retrieve the dict of data from a Discogs release."""
