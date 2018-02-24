@@ -3,9 +3,10 @@ from pathlib import Path
 import os
 import json
 import patoolib
+import pathlib
 import unittest.mock
 import nofuture.decompress, nofuture.release, nofuture.nofuture
-from nofuture.config import ARCHIVES_DIR, STAGING_DIR, ARCHIVE_FORMATS
+from nofuture.config import ARCHIVES_DIR, STAGING_DIR, OUTPUT_DIR, ARCHIVE_FORMATS
 
 # Discogs release id of testing release
 RELEASE_ID = 6666365
@@ -17,6 +18,9 @@ FORMATTED_RELEASE = {'id': 6666365,
                      'label': "Wisdom Teeth",
                      'catno': "WSDM002",
                      'year': 2015}
+
+# Expected formatted release directory
+FORMATTED_DIR = "Wisdom Teeth/[WSDM002] Hodge, Acre - X _ Don't Get Me Started (2015)"
 
 # Archive information
 ARCHIVE = {'dirname': "Hodge & Acre - X _ Don't Get Me Started [2015] [EP]",
@@ -32,6 +36,10 @@ def archives_dir(tmpdir):
 @pytest.fixture
 def staging_dir(tmpdir):
     return tmpdir.mkdir(STAGING_DIR)
+
+@pytest.fixture
+def output_dir(tmpdir):
+    return tmpdir.mkdir(OUTPUT_DIR)
 
 @pytest.fixture
 def decompressed_dir(tmpdir):
@@ -81,6 +89,11 @@ def release(monkeypatch, release_data):
                         get_release_data)
     return nofuture.release.Release(RELEASE_ID)
 
+@pytest.fixture()
+def releases(staging, decompressed_dir, release):
+    """Return the releases dict {fpath: Release} for the staging directory."""
+    return {staging.join(decompressed_dir.basename): release}
+
 @pytest.mark.parametrize('archive', ARCHIVE_FORMATS, indirect=True)
 def test_decompression(archive, archives_dir, staging_dir):
     """Can all formats be decompressed from archives to staging?"""
@@ -121,3 +134,12 @@ def test_release_creation_from_staging(monkeypatch, staging, release):
             name='mock discogs_client.models.models.Release')])
     releases, failed = nofuture.nofuture.get_releases_in_staging(staging)
     assert releases and not failed
+
+def test_release_directory_formatting(releases, staging, output_dir):
+    """Will the output release directory be formatted correctly?"""
+    formatted = nofuture.nofuture.format_release_directories(releases,
+        pathlib.Path(staging), pathlib.Path(output_dir))
+    (input_path, formatted_path), = formatted.items()
+    print(input_path, formatted_path)
+    assert formatted_path == output_dir.join(FORMATTED_DIR)
+    assert not os.path.exists(input_path)
