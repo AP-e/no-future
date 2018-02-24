@@ -8,4 +8,8 @@ music/
 *.json
 *.orig
 *.log
-
+.project
+.pytest_cache/
+*.egg-info/
+source/
+temp/
