@@ -18,7 +18,7 @@ def main():
     releases, failed = nofuture.get_releases_in_staging(staging_dir)
     
     # Rename release directories accordingly
-    nofuture.format_release_directories(releases, staging_dir, output_dir)
+    formatted = nofuture.format_release_directories(releases, staging_dir, output_dir)
     
     # Clean up decompressed archives
     for fpath in decompressed:

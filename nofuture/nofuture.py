@@ -50,11 +50,14 @@ def get_release_from_dirname(dirname):
     return release.Release.from_search(full_title)
 
 def format_release_directories(releases, staging_dir, output_dir):
+    formatted = {}
     for dirname, release_ in sorted(releases.items()):
         input_path = staging_dir.joinpath(dirname)
         release_dir = format_release_path(**release_)
         output_path = output_dir.joinpath(release_dir)
         moved = shutil.move(str(input_path), str(output_path))
+        formatted[input_path] = output_path
+    return formatted
 
 def touch_directories(staging_dir, output_dir):
     """Create specified staging and output directories, if necessary.""" 
